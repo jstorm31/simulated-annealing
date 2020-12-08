@@ -17,7 +17,28 @@ struct KnapsackConfiguration: Configuration {
         return String(data: jsonData, encoding: .utf8)!
     }
     
-    static func loadSolutions(path: String, count: Int = 10) throws -> [KnapsackConfiguration] {
+    
+    var cost: Int {
+        
+    }
+    
+    func randomNeighbour(for problem: KnapsackProblem) -> Configuration {
+        let flipPosition = Int.random(in: 0...(items.count - 1))
+        var newItems = items
+        newItems[flipPosition] = !newItems[flipPosition]
+        
+        let (weight, price) = newItems.enumerated().reduce((0, 0)) { (acc, item) in
+            let (i, isPresent) = item
+            return isPresent ? (acc.0 + problem.items[i].weight, acc.1 + problem.items[i].price) : acc
+        }
+        return KnapsackConfiguration(weight: weight, price: price, items: newItems)
+    }
+    
+    func isBetter(than: Configuration) -> Bool {
+        <#code#>
+    }
+    
+    static func loadSolutions(path: String, count: Int = 10) throws -> [Configuration] {
         let fullPath = NSString(string: path).expandingTildeInPath
         let text = try String(contentsOfFile: fullPath, encoding: .utf8)
         let lines = text.components(separatedBy: .newlines)[..<count]

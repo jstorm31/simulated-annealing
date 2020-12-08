@@ -6,6 +6,8 @@
 //
 
 protocol Problem: Encodable, CustomStringConvertible {
-    static func loadProblems(path: String, count: Int) throws -> [Self]
+    var size: Int { get }
+    
+    static func loadProblems(path: String, count: Int) throws -> [Problem]
 }
 

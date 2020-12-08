@@ -23,12 +23,16 @@ final class KnapsackProblem: Problem {
         self.items = items
     }
     
+    var size: Int {
+        return items.count
+    }
+    
     var description: String {
         let jsonData = try! JSONEncoder().encode(self)
         return String(data: jsonData, encoding: .utf8)!
     }
     
-    static func loadProblems(path: String, count: Int = 10) throws -> [KnapsackProblem] {
+    static func loadProblems(path: String, count: Int = 10) throws -> [Problem] {
         let fullPath = NSString(string: path).expandingTildeInPath
         let text = try String(contentsOfFile: fullPath, encoding: .utf8)
         let lines = text.components(separatedBy: .newlines)[..<count]

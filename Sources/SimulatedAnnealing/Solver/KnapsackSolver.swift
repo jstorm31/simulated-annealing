@@ -7,11 +7,24 @@
 
 import Foundation
 
-struct KnapsackSolver: Solver {
-//    typealias ProblemType = KnapsackProblem
-//    typealias ConfigurationType = KnapsackConfiguration
+final class KnapsackSolver: Solver {
+    let initialTemperature: Double
+    let initialState: Configuration
+    let coolingCoefficient: Double
+    let k: Int // Problem size coefficient
+        
+    init(initialTemperature: Double, initialState: KnapsackConfiguration, coolingCoefficient: Double, k: Int) {
+        self.initialTemperature = initialTemperature
+        self.initialState = initialState
+        self.coolingCoefficient = coolingCoefficient
+        self.k = k
+    }
     
-    func solve(problem: KnapsackProblem) -> KnapsackConfiguration {
-        return KnapsackConfiguration(weight: nil, price: 40, items: [])
+    func frozen(_ temperature: Double) -> Bool {
+        <#code#>
+    }
+    
+    func equilibrium(_ iteration: Int, _ problem: Problem) -> Bool {
+        return iteration >= (k * problem.size)
     }
 }
