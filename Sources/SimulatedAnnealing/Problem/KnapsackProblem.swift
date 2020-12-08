@@ -7,7 +7,7 @@
 
 import Foundation
 
-class KnapsackProblem: Encodable, CustomStringConvertible {
+final class KnapsackProblem: Problem {
     struct Item: Encodable {
         let weight: Int
         let price: Int

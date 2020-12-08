@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Solution: Encodable, CustomStringConvertible {
+struct KnapsackConfiguration: Configuration {
     var weight: Int?
     var price: Int
     var items: [Bool]
@@ -17,7 +17,7 @@ struct Solution: Encodable, CustomStringConvertible {
         return String(data: jsonData, encoding: .utf8)!
     }
     
-    static func loadSolutions(path: String, count: Int = 10) throws -> [Solution] {
+    static func loadSolutions(path: String, count: Int = 10) throws -> [KnapsackConfiguration] {
         let fullPath = NSString(string: path).expandingTildeInPath
         let text = try String(contentsOfFile: fullPath, encoding: .utf8)
         let lines = text.components(separatedBy: .newlines)[..<count]
@@ -32,13 +32,13 @@ struct Solution: Encodable, CustomStringConvertible {
                 items.append(parts[i] == "1")
             }
             
-            return Solution(weight: nil, price: Int(parts[2])!, items: items)
+            return KnapsackConfiguration(weight: nil, price: Int(parts[2])!, items: items)
         }
     }
 }
 
-extension Solution: Equatable {
-    static func == (lhs: Solution, rhs: Solution) -> Bool {
+extension KnapsackConfiguration: Equatable {
+    static func == (lhs: KnapsackConfiguration, rhs: KnapsackConfiguration) -> Bool {
         if lhs.price != rhs.price {
             return false
         }

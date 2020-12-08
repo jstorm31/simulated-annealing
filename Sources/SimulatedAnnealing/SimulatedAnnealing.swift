@@ -13,7 +13,11 @@ struct SimulatedAnnealing: ParsableCommand {
     var inputPath: String
 
     mutating func run() throws {
-        let problems = try KnapsackProblem.loadProblems(path: inputPath)
-        print(problems)
+        let problems = try KnapsackProblem.loadProblems(path: inputPath, count: 1)
+        
+        for problem in problems {
+            let solution = KnapsackSolver().solve(problem: problem)
+            print(solution)
+        }
     }
 }
