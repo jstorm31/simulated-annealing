@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Files
 
 class KnapsackProblem: Encodable, CustomStringConvertible {
     struct Item: Encodable {
