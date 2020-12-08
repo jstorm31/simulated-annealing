@@ -6,15 +6,14 @@
 //
 
 import Foundation
+import ArgumentParser
 
-public final class SimulatedAnnealing {
-    private let arguments: [String]
+struct SimulatedAnnealing: ParsableCommand {
+    @Option(name: .short, help: "An input file path with problems relative to Data directory")
+    var inputPath: String
 
-    public init(arguments: [String] = CommandLine.arguments) {
-        self.arguments = arguments
-    }
-
-    public func run() throws {
-        print("Hello world")
+    mutating func run() throws {
+        let problems = try KnapsackProblem.loadProblems(path: inputPath)
+        print(problems)
     }
 }
