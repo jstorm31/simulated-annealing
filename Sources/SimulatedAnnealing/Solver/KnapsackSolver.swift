@@ -9,22 +9,21 @@ import Foundation
 
 final class KnapsackSolver: Solver {
     let initialTemperature: Double
-    let initialState: Configuration
-    let coolingCoefficient: Double
-    let k: Int // Problem size coefficient
+    var coolingCoefficient: Double
+    let problemSizeCoefficient: Int
         
-    init(initialTemperature: Double, initialState: KnapsackConfiguration, coolingCoefficient: Double, k: Int) {
+    init(initialTemperature: Double, coolingCoefficient: Double, problemSizeCoefficient: Int) {
         self.initialTemperature = initialTemperature
-        self.initialState = initialState
         self.coolingCoefficient = coolingCoefficient
-        self.k = k
+        self.problemSizeCoefficient = problemSizeCoefficient
     }
     
     func frozen(_ temperature: Double) -> Bool {
-        <#code#>
+        // TODO: Implement as a change ratio dropping under a treshold
+        return temperature < 5.0
     }
     
     func equilibrium(_ iteration: Int, _ problem: Problem) -> Bool {
-        return iteration >= (k * problem.size)
+        return iteration >= (problemSizeCoefficient * problem.size)
     }
 }

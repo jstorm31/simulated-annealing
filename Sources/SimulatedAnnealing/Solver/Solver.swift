@@ -11,7 +11,6 @@ protocol Solver {
     typealias Temperature = Double
     
     var initialTemperature: Temperature { get }
-    var initialState: Configuration { get }
     var coolingCoefficient: Double { get set }
     
     func frozen(_ temperature: Temperature) -> Bool
@@ -20,17 +19,18 @@ protocol Solver {
 
 extension Solver {
     /// Solves the given problem using simulated annealing
-    func solve(problem: Problem) -> Configuration {
+    func solve(problem: Problem, initialState: Configuration) -> Configuration {
         var temperature = initialTemperature
         var best = initialState
         var state = initialState
+        print("Initial state: \(initialState)")
         
         while(!frozen(temperature)) {
             var i = 0
             
             while(!equilibrium(i, problem)) {
                 i += 1
-                state = next(problem, best, temperature)
+                state = next(best, temperature)
                 
                 if state.isBetter(than: best) {
                     best = state
@@ -44,8 +44,8 @@ extension Solver {
     }
     
     /// Generates a neighbor configuration for the given one
-    private func next(_ problem: Problem, _ state: Configuration, _ temperature: Temperature) -> Configuration {
-        let new = state.randomNeighbour(for: problem)
+    private func next(_ state: Configuration, _ temperature: Temperature) -> Configuration {
+        let new = state.randomNeighbour
         
         if (new.isBetter(than: state)) {
             return new

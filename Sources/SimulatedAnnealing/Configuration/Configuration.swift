@@ -7,8 +7,8 @@
 
 protocol Configuration: Encodable, CustomStringConvertible {
     var cost: Int { get }
+    var randomNeighbour: Configuration { get }
     
-    func randomNeighbour(for: Problem) -> Configuration
     func isBetter(than: Configuration) -> Bool
-    static func loadSolutions(path: String, count: Int) throws -> [Configuration]
+//    static func loadSolutions(path: String, count: Int) throws -> [Configuration]
 }
