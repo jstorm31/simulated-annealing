@@ -30,7 +30,6 @@ extension Solver {
         var temperature = initialTemperature
         var best = initialState
         var state = initialState
-        print("Initial state: \(initialState)\nInitial temperature: \(temperature)")
         
         while !frozen(temperature) {
             var i = 0

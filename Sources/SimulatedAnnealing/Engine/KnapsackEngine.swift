@@ -17,8 +17,7 @@ final class KnapsackEngine: Engine {
     func measure() -> [SolverResult] {
         var results = [SolverResult]()
         
-        for (i, problem) in problems.enumerated() {
-            print("Solving problem: \(i)")
+        for problem in problems {
             let result = measure(problem)
             results.append(result)
         }

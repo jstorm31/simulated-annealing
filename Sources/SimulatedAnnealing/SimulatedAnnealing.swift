@@ -23,13 +23,16 @@ struct SimulatedAnnealing: ParsableCommand {
             throw SimulatedAnnealingError.invalidProblemType
         }
         
+        print("Solving \(count ?? 1) \(problemType) problems...")
         let engine = createEngine(from: problemType)
         try engine.loadProblems(inputPath, count ?? 1)
         let results = engine.measure()
         
-        let avgTime = results.map { $0.time! }.reduce(0.0, +) / Double(results.count)
-        let avgError = results.map { $0.error! }.reduce(0.0, +) / Double(results.count)
-        print("Average time: \(avgTime)\nAverage error: \(avgError)")
+        let times = results.map { $0.time! }
+        let avgTime = times.reduce(0.0, +) / Double(results.count)
+        let errors = results.map { $0.error! }
+        let avgError = errors.reduce(0.0, +) / Double(results.count)
+        print("Average time: \(avgTime) ms\nMax time: \(times.max()!) ms\nAverage error: \(avgError)\nMax error: \(errors.max()!)")
     }
     
     func createEngine(from problemType: ProblemType) -> Engine {
