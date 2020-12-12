@@ -14,15 +14,12 @@ final class KnapsackSolver: Solver {
     var initialState: Configuration
     var coolingCoefficient: Double
     let equilibriumCoefficient: Int
-    
-    private var frequency: FrequencyStatistics
         
     init(initialState: Configuration, initialTemperature: Double, coolingCoefficient: Double, equilibriumCoefficient: Int) {
-        frequency = (better: 1.0, worse: 1.0)
+        self.initialTemperature = initialTemperature
         self.initialState = initialState
         self.coolingCoefficient = coolingCoefficient
         self.equilibriumCoefficient = equilibriumCoefficient
-        self.initialTemperature = initialTemperature
     }
     
     func frozen(_ temperature: Double) -> Bool {
@@ -33,19 +30,12 @@ final class KnapsackSolver: Solver {
         return iteration >= (equilibriumCoefficient * problem.size)
     }
     
-    func gatherStatistics(_ newState: Configuration, _ oldState: Configuration) {
-        if newState.isBetter(than: oldState) {
-            frequency.better += 1.0
-        } else {
-            frequency.worse += 1.0
-        }
-    }
-    
     /// Find the initial temperature by increasing it and observing accepted changes to worse
-    func temperatureTunning(_ ratioTreshold: Double = 0.5, _ epsilon: Double = 0.05, _ step: Temperature = 50.0) {
+    func temperatureTunning(_ ratioTreshold: Double = 1.0, _ epsilon: Double = 0.05, _ step: Temperature = 50.0) {
         var temperature = initialTemperature
         var state = initialState
         let acceptedInterval = (ratioTreshold - epsilon)...(ratioTreshold + epsilon)
+        var frequency: FrequencyStatistics = (better: 1.0, worse: 1.0)
         let statisticsTreshold = 10
         var i = 0
         
@@ -70,7 +60,6 @@ final class KnapsackSolver: Solver {
             i += 1
         }
         
-        frequency = (better: 1.0, worse: 1.0)
         initialTemperature = temperature
     }
     

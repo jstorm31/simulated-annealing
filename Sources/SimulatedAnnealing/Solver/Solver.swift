@@ -22,7 +22,6 @@ protocol Solver {
     
     func frozen(_ temperature: Temperature) -> Bool
     func equilibrium(_ iteration: Int, _ problem: Problem) -> Bool
-    func gatherStatistics(_ newState: Configuration, _ oldState: Configuration)
 }
 
 extension Solver {

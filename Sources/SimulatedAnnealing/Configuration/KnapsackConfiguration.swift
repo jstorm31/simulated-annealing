@@ -60,23 +60,4 @@ struct KnapsackConfiguration: Configuration {
         
         return configuration
     }
-    
-//    static func loadSolutions(path: String, count: Int = 10) throws -> [Configuration] {
-//        let fullPath = NSString(string: path).expandingTildeInPath
-//        let text = try String(contentsOfFile: fullPath, encoding: .utf8)
-//        let lines = text.components(separatedBy: .newlines)[..<count]
-//
-//        return lines.compactMap { line in
-//            guard !line.isEmpty else { return nil }
-//
-//            let parts = line.components(separatedBy: .whitespaces)
-//            var items = [Bool]()
-//
-//            for i in 3..<parts.count {
-//                items.append(parts[i] == "1")
-//            }
-//
-//            return KnapsackConfiguration(weight: nil, price: Int(parts[2])!, items: items)
-//        }
-//    }
 }
