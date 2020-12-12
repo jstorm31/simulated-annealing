@@ -7,6 +7,12 @@
 
 import Foundation
 
+struct SolverResult {
+    var solution: Configuration
+    var error: Double?
+    var time: Double?
+}
+
 protocol Solver {
     typealias Temperature = Double
     

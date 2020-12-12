@@ -66,12 +66,21 @@ final class KnapsackSolver: Solver {
             state = newState
             if i > statisticsTreshold {
                 temperature += step
-            } else {
-                i += 1
             }
+            i += 1
         }
         
         frequency = (better: 1.0, worse: 1.0)
         initialTemperature = temperature
+    }
+    
+    /// Calculate the error from reference solution
+    func measureError(_ problem: KnapsackProblem, _ solution: KnapsackConfiguration) -> Double {
+        let referenceSolution = WeightDecompositionSolver().solve(problem: problem)
+        return calculateError(solution, referenceSolution)
+    }
+    
+    func calculateError(_ solution: KnapsackConfiguration, _ reference: KnapsackConfiguration) -> Double {
+        return Double(abs(solution.price - reference.price)) / Double(max(solution.price, reference.price))
     }
 }
