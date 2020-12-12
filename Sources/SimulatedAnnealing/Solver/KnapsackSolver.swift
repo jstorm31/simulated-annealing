@@ -22,8 +22,8 @@ final class KnapsackSolver: Solver {
         self.equilibriumCoefficient = equilibriumCoefficient
     }
     
-    func frozen(_ temperature: Double) -> Bool {
-        return temperature < 1.0
+    func frozen(_ temperature: Double, _ changeRatio: Float) -> Bool {
+        return changeRatio < 0.2
     }
     
     func equilibrium(_ iteration: Int, _ problem: Problem) -> Bool {
@@ -31,7 +31,7 @@ final class KnapsackSolver: Solver {
     }
     
     /// Find the initial temperature by increasing it and observing accepted changes to worse
-    func temperatureTunning(_ ratioTreshold: Double = 1.0, _ epsilon: Double = 0.05, _ step: Temperature = 50.0) {
+    func temperatureTunning(_ ratioTreshold: Double = 0.8, _ epsilon: Double = 0.05, _ step: Temperature = 20.0) {
         var temperature = initialTemperature
         var state = initialState
         let acceptedInterval = (ratioTreshold - epsilon)...(ratioTreshold + epsilon)

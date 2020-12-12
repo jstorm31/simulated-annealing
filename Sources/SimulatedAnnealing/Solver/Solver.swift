@@ -22,7 +22,7 @@ protocol Solver {
     var initialState: Configuration { get set }
     var coolingCoefficient: Double { get set }
     
-    func frozen(_ temperature: Temperature) -> Bool
+    func frozen(_ temperature: Temperature, _ changeRatio: Float) -> Bool
     func equilibrium(_ iteration: Int, _ problem: Problem) -> Bool
 }
 
@@ -34,30 +34,39 @@ extension Solver {
         var temperature = initialTemperature
         var best = initialState
         var state = initialState
-        var points = [PlotPoint]()
+        var points = [Int]()
+        
+        var changes = 1
+        var changeRatio: Float = 1.0
         var j = 0
         print("Initial state: \(state)\nInitial temperature: \(temperature)")
         
-        while !frozen(temperature) {
+        while !frozen(temperature, changeRatio) {
             var i = 0
-            
-            if plot {
-                points.append((x: Float(j), y: Float(state.cost)))
-            }
-            
+                        
             while !equilibrium(i, problem) {
-                i += 1
-                state = next(best, temperature)
+                if plot {
+                    points.append(state.cost)
+                }
+                
+                let newState = next(best, temperature)
+                if newState.cost != state.cost {
+                    changes += 1
+                }
+                state = newState
                                 
                 if state.isBetter(than: best) {
                     best = state
                 }
+                i += 1
             }
             
+            changeRatio = Float(changes) / Float(j*i+1)
             temperature *= coolingCoefficient
             j += 1
         }
         
+        print(points[0...10])
         if plot {
             self.plot(points)
         }
@@ -76,14 +85,14 @@ extension Solver {
         return Double.random(in: 0.0...1.0) < pow(M_E, -(delta / temperature)) ? new : state
     }
     
-    func plot(_ points: [PlotPoint]) {
+    func plot(_ points: [Int]) {
         let renderer = AGGRenderer()
         var plot = LineGraph<Float, Float>()
-        plot.addSeries(points.map { $0.x }, points.map { $0.y }, label: "", color: .lightBlue)
+        plot.addSeries(points.enumerated().map { Float($0.0) }, points.map { Float($0) }, label: "", color: .lightBlue)
         plot.plotTitle.title = "Simulated annealing for Knapsack problem"
         plot.plotLabel.xLabel = "Iteration"
         plot.plotLabel.yLabel = "Cost"
-        plot.plotLineThickness = 1.0
+        plot.plotLineThickness = 0.5
         
         let path = NSString(string: "~/FIT/KOP/simulated-annealing/Output").expandingTildeInPath
         let fileName = path + "/simulated_annealing_knapsack.png"

@@ -29,9 +29,8 @@ final class KnapsackEngine: Engine {
     }
     
     func measure(_ problem: KnapsackProblem, _ plot: Bool) -> SolverResult {
-//        let initialState = GreedySolver().solve(problem)
-        let initialState = KnapsackConfiguration.randomSolution(for: problem)
-        let solver = KnapsackSolver(initialState: initialState, initialTemperature: 10, coolingCoefficient: 0.995, equilibriumCoefficient: 10)
+        let initialState = GreedySolver().solve(problem)
+        let solver = KnapsackSolver(initialState: initialState, initialTemperature: 10, coolingCoefficient: 0.995, equilibriumCoefficient: 5)
         
         let start = DispatchTime.now()
         solver.temperatureTunning()
