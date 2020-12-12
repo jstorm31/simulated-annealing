@@ -4,4 +4,4 @@
 /*.xcodeproj
 xcuserdata/
 
-/Output
+/Output/**

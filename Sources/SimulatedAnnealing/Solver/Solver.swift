@@ -66,7 +66,6 @@ extension Solver {
             j += 1
         }
         
-        print(points[0...10])
         if plot {
             self.plot(points)
         }
@@ -95,7 +94,7 @@ extension Solver {
         plot.plotLineThickness = 0.5
         
         let path = NSString(string: "~/FIT/KOP/simulated-annealing/Output").expandingTildeInPath
-        let fileName = path + "/simulated_annealing_knapsack.png"
+        let fileName = path + "/simulated_annealing"
         
         do {
             try plot.drawGraphAndOutput(fileName: fileName, renderer: renderer)
