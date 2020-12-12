@@ -15,8 +15,11 @@ struct SimulatedAnnealing: ParsableCommand {
     @Option(name: .short, help: "Number of problems to load")
     var count: Int?
     
-    @Option(name: .shortAndLong, help: "Problem type (available types: knapsack")
+    @Option(name: .long, help: "Problem type (available types: knapsack")
     var problem: String
+    
+    @Flag(help: "Generate plot")
+    var plot = false
 
     mutating func run() throws {
         guard let problemType = ProblemType(rawValue: problem) else {
@@ -26,13 +29,13 @@ struct SimulatedAnnealing: ParsableCommand {
         print("Solving \(count ?? 1) \(problemType) problems...")
         let engine = createEngine(from: problemType)
         try engine.loadProblems(inputPath, count ?? 1)
-        let results = engine.measure()
+        let results = engine.measure(plot: plot)
         
         let times = results.map { $0.time! }
         let avgTime = times.reduce(0.0, +) / Double(results.count)
         let errors = results.map { $0.error! }
         let avgError = errors.reduce(0.0, +) / Double(results.count)
-        print("Average time: \(avgTime) ms\nMax time: \(times.max()!) ms\nAverage error: \(avgError)\nMax error: \(errors.max()!)")
+        print("\nFinished\nAverage time: \(avgTime) ms\nMax time: \(times.max()!) ms\nAverage error: \(avgError)\nMax error: \(errors.max()!)")
     }
     
     func createEngine(from problemType: ProblemType) -> Engine {

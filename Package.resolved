@@ -9,6 +9,15 @@
           "revision": "92646c0cdbaca076c8d3d0207891785b3379cbff",
           "version": "0.3.1"
         }
+      },
+      {
+        "package": "SwiftPlot",
+        "repositoryURL": "https://github.com/KarthikRIyer/swiftplot.git",
+        "state": {
+          "branch": null,
+          "revision": "c5424eb8688217029d44e941d3a1d2ccc18c3a82",
+          "version": "2.0.0"
+        }
       }
     ]
   },

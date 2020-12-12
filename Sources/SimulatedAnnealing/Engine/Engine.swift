@@ -9,5 +9,5 @@ import Foundation
 
 protocol Engine {
     func loadProblems(_ path: String, _ count: Int) throws
-    func measure() -> [SolverResult]
+    func measure(plot: Bool) -> [SolverResult]
 }

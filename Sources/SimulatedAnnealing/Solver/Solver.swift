@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import SwiftPlot
+import AGGRenderer
 
 struct SolverResult {
     var solution: Configuration
@@ -25,14 +27,23 @@ protocol Solver {
 }
 
 extension Solver {
+    typealias PlotPoint = (x: Float, y: Float)
+    
     /// Solves the given problem using simulated annealing
-    func solve(_ problem: Problem) -> Configuration {
+    func solve(_ problem: Problem, plot: Bool = false) -> Configuration {
         var temperature = initialTemperature
         var best = initialState
         var state = initialState
+        var points = [PlotPoint]()
+        var j = 0
+        print("Initial state: \(state)\nInitial temperature: \(temperature)")
         
         while !frozen(temperature) {
             var i = 0
+            
+            if plot {
+                points.append((x: Float(j), y: Float(state.cost)))
+            }
             
             while !equilibrium(i, problem) {
                 i += 1
@@ -44,8 +55,12 @@ extension Solver {
             }
             
             temperature *= coolingCoefficient
+            j += 1
         }
         
+        if plot {
+            self.plot(points)
+        }
         return best
     }
     
@@ -57,7 +72,27 @@ extension Solver {
             return new
         }
         
-        let delta = Double(new.cost - state.cost)
+        let delta = Double(state.cost - new.cost)
         return Double.random(in: 0.0...1.0) < pow(M_E, -(delta / temperature)) ? new : state
+    }
+    
+    func plot(_ points: [PlotPoint]) {
+        let renderer = AGGRenderer()
+        var plot = LineGraph<Float, Float>()
+        plot.addSeries(points.map { $0.x }, points.map { $0.y }, label: "", color: .lightBlue)
+        plot.plotTitle.title = "Simulated annealing for Knapsack problem"
+        plot.plotLabel.xLabel = "Iteration"
+        plot.plotLabel.yLabel = "Cost"
+        plot.plotLineThickness = 1.0
+        
+        let path = NSString(string: "~/FIT/KOP/simulated-annealing/Output").expandingTildeInPath
+        let fileName = path + "/simulated_annealing_knapsack.png"
+        
+        do {
+            try plot.drawGraphAndOutput(fileName: fileName, renderer: renderer)
+        } catch {
+            print("Error generating plot")
+            print(error)
+        }
     }
 }

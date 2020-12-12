@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftPlot
 
 final class KnapsackEngine: Engine {
     var problems = [KnapsackProblem]()
@@ -14,26 +15,29 @@ final class KnapsackEngine: Engine {
         problems = try KnapsackProblem.loadProblems(path: path, count: count)
     }
     
-    func measure() -> [SolverResult] {
+    func measure(plot: Bool) -> [SolverResult] {
         var results = [SolverResult]()
         
-        for problem in problems {
-            let result = measure(problem)
+        for (i, problem) in problems.enumerated() {
+            print("Solving problem: \(i)")
+            let result = measure(problem, plot)
+            print("Result: \(result.solution)\n")
             results.append(result)
         }
         
         return results
     }
     
-    func measure(_ problem: KnapsackProblem) -> SolverResult {
-        let initialState = GreedySolver().solve(problem)
-        let solver = KnapsackSolver(initialState: initialState, initialTemperature: 100.0, coolingCoefficient: 0.995, equilibriumCoefficient: 10)
+    func measure(_ problem: KnapsackProblem, _ plot: Bool) -> SolverResult {
+//        let initialState = GreedySolver().solve(problem)
+        let initialState = KnapsackConfiguration.randomSolution(for: problem)
+        let solver = KnapsackSolver(initialState: initialState, initialTemperature: 10, coolingCoefficient: 0.995, equilibriumCoefficient: 10)
         
         let start = DispatchTime.now()
         solver.temperatureTunning()
-        let solution: KnapsackConfiguration = solver.solve(problem) as! KnapsackConfiguration
+        let solution = solver.solve(problem, plot: plot)
         let elapsed = Double(DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000
-        let error = solver.measureError(problem, solution)
+        let error = solver.measureError(problem, solution as! KnapsackConfiguration)
         
         return SolverResult(solution: solution, error: error, time: elapsed)
     }
