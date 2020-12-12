@@ -16,19 +16,17 @@ final class KnapsackProblem: Problem {
     var id: Int
     var capacity: Int
     var items: [KnapsackProblem.Item]
+    var minPrice: Int
     
     init(id: Int, M: Int, items: [KnapsackProblem.Item]) {
         self.id = id
         self.capacity = M
         self.items = items
+        self.minPrice = items.min { $0.price < $1.price }!.price
     }
     
     var size: Int {
         return items.count
-    }
-    
-    var minPrice: Int {
-        items.min { $0.price < $1.price }!.price
     }
     
     var description: String {

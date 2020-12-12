@@ -16,7 +16,7 @@ struct SimulatedAnnealing: ParsableCommand {
         let problems = try KnapsackProblem.loadProblems(path: inputPath, count: 1)
         
         for problem in problems {
-            let solver = KnapsackSolver(initialTemperature: 1000.0, coolingCoefficient: 0.995, problemSizeCoefficient: 100)
+            let solver = KnapsackSolver(initialTemperature: 100.0, coolingCoefficient: 0.995, equilibriumCoefficient: 100)
             let solution = solver.solve(problem: problem, initialState: KnapsackConfiguration.randomSolution(for: problem))
             print(solution)
         }
