@@ -30,8 +30,7 @@ final class KnapsackProblem: Problem {
     }
     
     var description: String {
-        let jsonData = try! JSONEncoder().encode(self)
-        return String(data: jsonData, encoding: .utf8)!
+        return json
     }
     
     static func loadProblems(path: String, count: Int = 10) throws -> [KnapsackProblem] {

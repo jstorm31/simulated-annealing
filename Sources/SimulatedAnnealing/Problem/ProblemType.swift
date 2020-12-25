@@ -7,4 +7,5 @@
 
 enum ProblemType: String {
     case knapsack
+    case mwsat
 }

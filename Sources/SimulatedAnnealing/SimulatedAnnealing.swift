@@ -15,7 +15,7 @@ struct SimulatedAnnealing: ParsableCommand {
     @Option(name: .short, help: "Number of problems to load")
     var count: Int?
     
-    @Option(name: .long, help: "Problem type (available types: knapsack")
+    @Option(name: .long, help: "Problem type (available types: knapsack, mwsat")
     var problem: String
     
     @Flag(help: "Generate plot")
@@ -26,24 +26,29 @@ struct SimulatedAnnealing: ParsableCommand {
             throw SimulatedAnnealingError.invalidProblemType
         }
         
-        print("Solving \(count ?? 1) \(problemType) problems...")
-        let engine = createEngine(from: problemType)
-        try engine.loadProblems(inputPath, count ?? 1)
-        let results = engine.measure(plot: plot)
+        let problem = try MWSATProblem.loadProblem(path: inputPath)
+        print(problem)
         
-        let times = results.map { $0.time! }
-        let avgTime = times.reduce(0.0, +) / Double(results.count)
-        let errors = results.map { $0.error! }
-        let avgError = errors.reduce(0.0, +) / Double(results.count)
-        print("\nFinished\nAverage time: \(avgTime) ms\nMax time: \(times.max()!) ms\nAverage error: \(avgError)\nMax error: \(errors.max()!)")
+//        print("Solving \(count ?? 1) \(problemType) problems...")
+//        let engine = createEngine(from: problemType)
+//        try engine.loadProblems(inputPath, count ?? 1)
+//        let results = engine.measure(plot: plot)
+//
+//        let times = results.map { $0.time! }
+//        let avgTime = times.reduce(0.0, +) / Double(results.count)
+//        let errors = results.map { $0.error! }
+//        let avgError = errors.reduce(0.0, +) / Double(results.count)
+//        print("\nFinished\nAverage time: \(avgTime) ms\nMax time: \(times.max()!) ms\nAverage error: \(avgError)\nMax error: \(errors.max()!)")
     }
     
-    func createEngine(from problemType: ProblemType) -> Engine {
-        switch problemType {
-        case .knapsack:
-            return KnapsackEngine()
-        }
-    }
+//    func createEngine(from problemType: ProblemType) -> Engine {
+//        switch problemType {
+//        case .knapsack:
+//            return KnapsackEngine()
+//        case .mwsat:
+//            return MWSATEngine()
+//        }
+//    }
 }
 
 enum SimulatedAnnealingError: Error {
