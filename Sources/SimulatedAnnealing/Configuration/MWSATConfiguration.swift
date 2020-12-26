@@ -9,23 +9,34 @@ import Foundation
 
 struct MWSATConfiguration: Configuration {
     let problem: MWSATProblem
-    let evaluation: [Bool]
-    let cost: Int
+    var isSatisfiable = false
+    private var weight = 0
+
+    var cost: Int {
+        get {
+            if !isSatisfiable {
+                return Int.random(in: 0...(problem.weights.min() ?? 1 - 1))
+            }
+                
+            return weight
+        }
+        set {
+            weight = newValue
+        }
+    }
+    
+    var evaluation: [Bool] {
+        didSet {
+            cost = calculateCost()
+            isSatisfiable = calculateSatisfiability()
+        }
+    }
     
     init(problem: MWSATProblem, evaluation: [Bool]) {
         self.problem = problem
         self.evaluation = evaluation
-        self.cost = problem.weights.enumerated().map({ evaluation[$0] ? $1 : 0 }).reduce(0, +)
-    }
-    
-    var isSatisfiable: Bool {
-        return problem.formula
-            .map { (clause: [Int]) -> Bool in
-                clause.enumerated().map { (i, variable) -> Bool in
-                    evaluation[i] ? variable > 0 : variable < 0
-                }.reduce(true) { $0 || $1 }
-            }
-            .reduce(true) { $0 && $1 }
+        weight = calculateCost()
+        isSatisfiable = calculateSatisfiability()
     }
     
     var randomNeighbour: Configuration {
@@ -42,5 +53,29 @@ struct MWSATConfiguration: Configuration {
 
     func isBetter(than configuration: Configuration) -> Bool {
         return cost > configuration.cost
+    }
+    
+    static func random(for problem: MWSATProblem) -> Self {
+        var evaluation = [Bool](repeating: false, count: problem.variableCount)
+        
+        evaluation = evaluation.map { value in
+            return Bool.random() ? !value : value
+        }
+        
+        return MWSATConfiguration(problem: problem, evaluation: evaluation)
+    }
+    
+    private func calculateCost() -> Int {
+        return problem.weights.enumerated().map({ evaluation[$0] ? $1 : 0 }).reduce(0, +)
+    }
+    
+    func calculateSatisfiability() -> Bool {
+        return problem.formula
+            .map { (clause: [Int]) -> Bool in
+                clause.map { variable -> Bool in
+                    evaluation[abs(variable) - 1] ? variable > 0 : variable < 0
+                }.reduce(false) { $0 || $1 }
+            }
+            .reduce(true) { $0 && $1 }
     }
 }
