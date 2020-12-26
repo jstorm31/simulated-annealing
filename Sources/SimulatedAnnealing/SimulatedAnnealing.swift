@@ -12,6 +12,9 @@ struct SimulatedAnnealing: ParsableCommand {
     @Option(name: .short, help: "An input file path with problems relative to Data directory")
     var inputPath: String
     
+    @Option(name: .short, help: "A file with solutions")
+    var solutionPath: String?
+    
     @Option(name: .short, help: "Number of problems to load")
     var count: Int?
     
@@ -28,7 +31,7 @@ struct SimulatedAnnealing: ParsableCommand {
         
         print("Solving \(count ?? 1) \(problemType) problems...")
         let engine = createEngine(from: problemType)
-        try engine.loadProblems(inputPath, count ?? 1)
+        try engine.loadProblems(inputPath, count ?? 1, solutionPath)
         let results = engine.measure(plot: plot)
 
         let times = results.compactMap { $0.time }

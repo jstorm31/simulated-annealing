@@ -10,8 +10,13 @@ import Foundation
 final class MWSATEngine: Engine {
     var problems = [MWSATProblem]()
     
-    func loadProblems(_ path: String, _ count: Int) throws {
+    func loadProblems(_ path: String, _ count: Int, _ solutionPath: String?) throws {
         let problem = try MWSATProblem.loadProblem(path: path)
+        
+        if let solutionPath = solutionPath {
+            let solution = try MWSATProblem.loadSolution(solutionPath, problem)
+            print(solution)
+        }
         problems.append(problem)
     }
     
@@ -29,6 +34,7 @@ final class MWSATEngine: Engine {
             results.append(SolverResult(solution: solution, error: nil, time: elapsed))
         }
         
+        print(results.first!.solution)
         return results
     }
 }

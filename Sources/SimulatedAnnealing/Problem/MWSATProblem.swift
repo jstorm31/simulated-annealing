@@ -76,4 +76,31 @@ final class MWSATProblem: Problem {
         
         return .init(id: id, variableCount: variableCount!, clauseCount: clauseCount!, weights: weights, formula: formula)
     }
+    
+    static func loadSolution(_ path: String, _ problem: MWSATProblem) throws -> MWSATConfiguration {
+        let fullPath = NSString(string: path).expandingTildeInPath
+        let problemId = problem.id.split(separator: "/").last!.split(separator: ".").first!
+        var solution: MWSATConfiguration!
+        
+        if freopen(fullPath, "r", stdin) == nil {
+            throw "Couldn't load the file from path \(fullPath)"
+        }
+        print(problemId)
+        
+        while let line = readLine() {
+            let lineId = line.components(separatedBy: .whitespaces).first!
+            guard "w" + lineId == problemId else {
+                continue
+            }
+            
+            let components = line.components(separatedBy: .whitespaces)
+            let evaluation = Array(components[2..<problem.variableCount + 2].map { Int($0)! > 0 })
+            solution = MWSATConfiguration(problem: problem, evaluation: evaluation)
+        }
+        
+        return solution
+    }
 }
+
+
+extension String: Error {}

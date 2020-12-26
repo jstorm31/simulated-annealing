@@ -8,6 +8,6 @@
 import Foundation
 
 protocol Engine {
-    func loadProblems(_ path: String, _ count: Int) throws
+    func loadProblems(_ path: String, _ count: Int, _ solutionPath: String?) throws
     func measure(plot: Bool) -> [SolverResult]
 }

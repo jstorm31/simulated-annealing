@@ -11,7 +11,7 @@ import SwiftPlot
 final class KnapsackEngine: Engine {
     var problems = [KnapsackProblem]()
     
-    func loadProblems(_ path: String, _ count: Int) throws {
+    func loadProblems(_ path: String, _ count: Int, _ solutionPath: String?) throws {
         problems = try KnapsackProblem.loadProblems(path: path, count: count)
     }
     
