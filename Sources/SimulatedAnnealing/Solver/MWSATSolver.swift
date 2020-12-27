@@ -20,4 +20,8 @@ struct MWSATSolver: Solver {
     func equilibrium(_ iteration: Int, _ problem: Problem) -> Bool {
         return iteration >= (equilibriumCoefficient * problem.size)
     }
+    
+    func measureError(_ solution: Configuration, _ referenceSolution: Configuration) -> Double {
+        return calculateError(solution, referenceSolution)
+    }
 }

@@ -103,4 +103,8 @@ extension Solver {
             print(error)
         }
     }
+    
+    func calculateError(_ solution: Configuration, _ reference: Configuration) -> Double {
+        return Double(abs(solution.cost - reference.cost)) / Double(max(solution.cost, reference.cost))
+    }
 }

@@ -85,7 +85,6 @@ final class MWSATProblem: Problem {
         if freopen(fullPath, "r", stdin) == nil {
             throw "Couldn't load the file from path \(fullPath)"
         }
-        print(problemId)
         
         while let line = readLine() {
             let lineId = line.components(separatedBy: .whitespaces).first!

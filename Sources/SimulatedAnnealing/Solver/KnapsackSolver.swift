@@ -68,8 +68,4 @@ final class KnapsackSolver: Solver {
         let referenceSolution = WeightDecompositionSolver().solve(problem: problem)
         return calculateError(solution, referenceSolution)
     }
-    
-    func calculateError(_ solution: KnapsackConfiguration, _ reference: KnapsackConfiguration) -> Double {
-        return Double(abs(solution.price - reference.price)) / Double(max(solution.price, reference.price))
-    }
 }
