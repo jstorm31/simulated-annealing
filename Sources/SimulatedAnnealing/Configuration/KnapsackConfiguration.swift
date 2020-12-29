@@ -41,10 +41,6 @@ struct KnapsackConfiguration: Configuration {
         return "{ price: \(price), weight: \(weight), items: \(items.map { $0 ? 1 : 0 } ) }"
     }
     
-    func isBetter(than configuration: Configuration) -> Bool {
-        return cost > configuration.cost
-    }
-    
     static func randomSolution(for problem: KnapsackProblem) -> KnapsackConfiguration {
         var configuration = KnapsackConfiguration(problem: problem, weight: 0, price: 0, items: [])
         

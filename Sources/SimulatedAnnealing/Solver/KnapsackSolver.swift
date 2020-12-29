@@ -30,6 +30,14 @@ final class KnapsackSolver: Solver {
         return iteration >= (equilibriumCoefficient * problem.size)
     }
     
+    func isBetter(_ lhs: Configuration, _ rhs: Configuration) -> Bool {
+        return lhs.cost > rhs.cost
+    }
+    
+    func delta(_ currentState: Configuration, _ newState: Configuration) -> Double {
+        return Double(currentState.cost - newState.cost)
+    }
+    
     /// Find the initial temperature by increasing it and observing accepted changes to worse
     func temperatureTunning(_ ratioTreshold: Double = 0.8, _ epsilon: Double = 0.05, _ step: Temperature = 20.0) {
         var temperature = initialTemperature
@@ -47,7 +55,7 @@ final class KnapsackSolver: Solver {
             
             let newState = next(state, temperature)
             
-            if newState.isBetter(than: state) {
+            if isBetter(newState, state) {
                 frequency.better += 1.0
             } else {
                 frequency.worse += 1.0

@@ -24,6 +24,8 @@ protocol Solver {
     
     func frozen(_ temperature: Temperature, _ changeRatio: Float) -> Bool
     func equilibrium(_ iteration: Int, _ problem: Problem) -> Bool
+    func isBetter(_ lhs: Configuration, _ rhs: Configuration) -> Bool
+    func delta(_ currentState: Configuration, _ newState: Configuration) -> Double
 }
 
 extension Solver {
@@ -55,7 +57,7 @@ extension Solver {
                 }
                 state = newState
                                 
-                if state.isBetter(than: best) {
+                if isBetter(state, best) {
                     best = state
                 }
                 i += 1
@@ -76,19 +78,20 @@ extension Solver {
     func next(_ state: Configuration, _ temperature: Temperature) -> Configuration {
         let new = state.randomNeighbour
         
-        if (new.isBetter(than: state)) {
+        if isBetter(new, state) {
             return new
         }
         
-        let delta = Double(state.cost - new.cost)
-        return Double.random(in: 0.0...1.0) < pow(M_E, -(delta / temperature)) ? new : state
+        let d = delta(state, new)
+        let p = pow(M_E, -(d / temperature))
+        return Double.random(in: 0.0...1.0) < p ? new : state
     }
     
     func plot(_ points: [Int]) {
         let renderer = AGGRenderer()
         var plot = LineGraph<Float, Float>()
         plot.addSeries(points.enumerated().map { Float($0.0) }, points.map { Float($0) }, label: "", color: .lightBlue)
-        plot.plotTitle.title = "Simulated annealing for Knapsack problem"
+        plot.plotTitle.title = "Simulated annealing for Weighted 3-SAT problem"
         plot.plotLabel.xLabel = "Iteration"
         plot.plotLabel.yLabel = "Cost"
         plot.plotLineThickness = 0.5

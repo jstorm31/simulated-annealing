@@ -77,10 +77,10 @@ final class MWSATProblem: Problem {
         return .init(id: id, variableCount: variableCount!, clauseCount: clauseCount!, weights: weights, formula: formula)
     }
     
-    static func loadSolution(_ path: String, _ problem: MWSATProblem) throws -> MWSATConfiguration {
+    static func loadSolution(_ path: String, _ problem: MWSATProblem) throws -> MWSATConfiguration? {
         let fullPath = NSString(string: path).expandingTildeInPath
         let problemId = problem.id.split(separator: "/").last!.split(separator: ".").first!
-        var solution: MWSATConfiguration!
+        var solution: MWSATConfiguration?
         
         if freopen(fullPath, "r", stdin) == nil {
             throw "Couldn't load the file from path \(fullPath)"
@@ -88,7 +88,9 @@ final class MWSATProblem: Problem {
         
         while let line = readLine() {
             let lineId = line.components(separatedBy: .whitespaces).first!
-            guard "w" + lineId == problemId else {
+            let prefix = problemId[problemId.startIndex] != lineId[lineId.startIndex] ? String(problemId[problemId.startIndex]) : ""
+            
+            guard prefix + lineId == problemId else {
                 continue
             }
             

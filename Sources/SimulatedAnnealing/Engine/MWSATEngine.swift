@@ -11,20 +11,26 @@ final class MWSATEngine: Engine {
     var problems = [(MWSATProblem, MWSATConfiguration?)]()
     
     func loadProblems(_ path: String, _ count: Int, _ solutionPath: String?) throws {
-        var directoryParts = NSString(string: path).expandingTildeInPath.split(separator: "/")
-        directoryParts = Array(directoryParts[0...directoryParts.index(directoryParts.endIndex, offsetBy: -2)])
-        let directoryPath = "/" + directoryParts.joined(separator: "/")
-        let problemPaths = try FileManager.default.contentsOfDirectory(atPath: directoryPath)
+        let fullPath = NSString(string: path).expandingTildeInPath
+        let problemPaths = try FileManager.default.contentsOfDirectory(atPath: fullPath)
+        var i = 0
+        var j = 0
         
-        for i in 0..<count {
-            let problemPath = directoryPath + "/" + problemPaths[i]
+        while i < count && j < problemPaths.count {
+            let problemPath = fullPath + "/" + problemPaths[j]
             let problem = try MWSATProblem.loadProblem(path: problemPath)
             var solution: MWSATConfiguration?
             
             if let solutionPath = solutionPath {
                 solution = try MWSATProblem.loadSolution(solutionPath, problem)
             }
-            problems.append((problem, solution))
+            
+            // Only add problems with solutions
+            if solution != nil {
+                problems.append((problem, solution))
+                i += 1
+            }
+            j += 1
         }
     }
     
@@ -32,11 +38,12 @@ final class MWSATEngine: Engine {
         var results = [SolverResult]()
         
         for (problem, referenceSolution) in problems {
+            print("Solving \(problem.id)")
             let initialState = MWSATConfiguration.random(for: problem)
-            let solver = MWSATSolver(initialTemperature: 5, initialState: initialState, coolingCoefficient: 0.995, equilibriumCoefficient: 1)
+            let solver = MWSATSolver(initialTemperature: 200, initialState: initialState, coolingCoefficient: 0.98, equilibriumCoefficient: 1)
             
             let start = DispatchTime.now()
-            let solution = solver.solve(problem)
+            let solution = solver.solve(problem, plot: plot)
             let elapsed = Double(DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000
             
             var error: Double?

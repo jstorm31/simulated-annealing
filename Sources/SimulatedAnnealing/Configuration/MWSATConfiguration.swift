@@ -10,15 +10,17 @@ import Foundation
 struct MWSATConfiguration: Configuration {
     let problem: MWSATProblem
     var isSatisfiable = false
-    private var weight = 0
+    var satisfiableClausesCount = 0
+    var weight = 0
 
     var cost: Int {
         get {
-            if !isSatisfiable {
-                return Int.random(in: 0...(problem.weights.min() ?? 1 - 1))
-            }
-                
-            return weight
+//            if !isSatisfiable {
+//                return Int.random(in: 0..<problem.weights.min()!)
+//            }
+//
+//            return weight
+            return satisfiableClausesCount
         }
         set {
             weight = newValue
@@ -29,18 +31,20 @@ struct MWSATConfiguration: Configuration {
         didSet {
             cost = calculateCost()
             isSatisfiable = calculateSatisfiability()
+            satisfiableClausesCount = calculateSatisfiableFormulasCount()
         }
     }
-    
+        
     init(problem: MWSATProblem, evaluation: [Bool]) {
         self.problem = problem
         self.evaluation = evaluation
         weight = calculateCost()
         isSatisfiable = calculateSatisfiability()
+        satisfiableClausesCount = calculateSatisfiableFormulasCount()
     }
     
     var randomNeighbour: Configuration {
-        let flipPosition = Int.random(in: 0...(evaluation.count - 1))
+        let flipPosition = Int.random(in: 0..<evaluation.count)
         var newEvaluation = evaluation
         newEvaluation[flipPosition] = !newEvaluation[flipPosition]
 
@@ -49,10 +53,6 @@ struct MWSATConfiguration: Configuration {
     
     var description: String {
         return "S: \(cost)\n\(evaluation.map { $0 ? 1 : 0 })"
-    }
-
-    func isBetter(than configuration: Configuration) -> Bool {
-        return cost > configuration.cost
     }
     
     static func random(for problem: MWSATProblem) -> Self {
@@ -77,5 +77,15 @@ struct MWSATConfiguration: Configuration {
                 }.reduce(false) { $0 || $1 }
             }
             .reduce(true) { $0 && $1 }
+    }
+    
+    func calculateSatisfiableFormulasCount() -> Int {
+        return problem.formula
+            .map { (clause: [Int]) -> Bool in
+                clause.map { variable -> Bool in
+                    evaluation[abs(variable) - 1] ? variable > 0 : variable < 0
+                }.reduce(false) { $0 || $1 }
+            }
+            .reduce(0) { $1 ? $0 + 1 : $0 }
     }
 }
