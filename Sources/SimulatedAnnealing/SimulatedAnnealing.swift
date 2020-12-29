@@ -21,6 +21,9 @@ struct SimulatedAnnealing: ParsableCommand {
     @Option(name: .long, help: "Problem type (available types: knapsack, mwsat")
     var problem: String
     
+    @Option(name: .long)
+    var initialTemperature: Double?
+    
     @Flag(help: "Generate plot")
     var plot = false
 
@@ -29,16 +32,20 @@ struct SimulatedAnnealing: ParsableCommand {
             throw SimulatedAnnealingError.invalidProblemType
         }
         
-        print("Solving \(count ?? 1) \(problemType) problems...")
+//        print("Solving \(count ?? 1) \(problemType) problems...")
         let engine = createEngine(from: problemType)
         try engine.loadProblems(inputPath, count ?? 1, solutionPath)
-        let results = engine.measure(plot: plot)
+        let results = engine.measure(plot: plot, initialTemperature)
 
+        let instanceId = inputPath.split(separator: "/").last!
         let times = results.compactMap { $0.time }
         let avgTime = times.reduce(0.0, +) / Double(results.count)
         let errors = results.compactMap { $0.error }
         let avgError = errors.reduce(0.0, +) / Double(results.count)
-        print("\nFinished\nAverage time: \(avgTime) ms\nMax time: \(times.max() ?? -1) ms\nAverage error: \(avgError)\nMax error: \(errors.max() ?? -1)")
+        
+        print("{\"instance\": \"\(instanceId)\",\"initial_temperature\": \(initialTemperature ?? 512.0), \"average_time\": \(avgTime.rounded()), \"average_error\": \(avgError)}")
+        
+//        print("\nFinished\nAverage time: \(avgTime) ms\nMax time: \(times.max() ?? -1) ms\nAverage error: \(avgError)\nMax error: \(errors.max() ?? -1)")
     }
     
     func createEngine(from problemType: ProblemType) -> Engine {

@@ -6,3 +6,6 @@ xcuserdata/
 
 /Output/**
 /Data/**/*
+
+results*.json
+.ipynb_checkpoints/

@@ -34,15 +34,17 @@ final class MWSATEngine: Engine {
         }
     }
     
-    func measure(plot: Bool) -> [SolverResult] {
+    func measure(plot: Bool, _ initialTemperature: Double?) -> [SolverResult] {
         var results = [SolverResult]()
+        var temperatures = [Double]()
         
         for (problem, referenceSolution) in problems {
-            print("Solving \(problem.id)")
             let initialState = MWSATConfiguration.random(for: problem)
-            let solver = MWSATSolver(initialTemperature: 200, initialState: initialState, coolingCoefficient: 0.98, equilibriumCoefficient: 1)
+            let solver = MWSATSolver(initialTemperature: 512.0, initialState: initialState, coolingCoefficient: 0.98, equilibriumCoefficient: 1)
             
             let start = DispatchTime.now()
+//            solver.initialTemperature = solver.temperatureTunning()
+            temperatures.append(solver.initialTemperature)
             let solution = solver.solve(problem, plot: plot)
             let elapsed = Double(DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000
             
@@ -54,7 +56,6 @@ final class MWSATEngine: Engine {
             results.append(SolverResult(solution: solution, error: error, time: elapsed))
         }
         
-        print(results.first!.solution)
         return results
     }
 }

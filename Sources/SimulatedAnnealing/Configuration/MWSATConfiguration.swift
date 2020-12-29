@@ -18,12 +18,11 @@ struct MWSATConfiguration: Configuration {
 //            if !isSatisfiable {
 //                return Int.random(in: 0..<problem.weights.min()!)
 //            }
-//
-//            return weight
+
             return satisfiableClausesCount
         }
         set {
-            weight = newValue
+            satisfiableClausesCount = newValue
         }
     }
     

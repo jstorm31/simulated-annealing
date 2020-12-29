@@ -15,7 +15,7 @@ final class KnapsackEngine: Engine {
         problems = try KnapsackProblem.loadProblems(path: path, count: count)
     }
     
-    func measure(plot: Bool) -> [SolverResult] {
+    func measure(plot: Bool, _ initialTemperature: Double?) -> [SolverResult] {
         var results = [SolverResult]()
         
         for (i, problem) in problems.enumerated() {
@@ -34,7 +34,7 @@ final class KnapsackEngine: Engine {
         let solver = KnapsackSolver(initialState: initialState, initialTemperature: 10, coolingCoefficient: 0.995, equilibriumCoefficient: 5)
         
         let start = DispatchTime.now()
-        solver.temperatureTunning()
+        solver.initialTemperature = solver.temperatureTunning()
         let solution = solver.solve(problem, plot: plot)
         let elapsed = Double(DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000
         let error = solver.measureError(problem, solution as! KnapsackConfiguration)

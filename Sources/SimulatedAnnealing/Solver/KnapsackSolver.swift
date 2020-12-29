@@ -8,8 +8,6 @@
 import Foundation
 
 final class KnapsackSolver: Solver {    
-    typealias FrequencyStatistics = (better: Double, worse: Double)
-
     var initialTemperature: Double
     var initialState: Configuration
     var coolingCoefficient: Double
@@ -36,39 +34,6 @@ final class KnapsackSolver: Solver {
     
     func delta(_ currentState: Configuration, _ newState: Configuration) -> Double {
         return Double(currentState.cost - newState.cost)
-    }
-    
-    /// Find the initial temperature by increasing it and observing accepted changes to worse
-    func temperatureTunning(_ ratioTreshold: Double = 0.8, _ epsilon: Double = 0.05, _ step: Temperature = 20.0) {
-        var temperature = initialTemperature
-        var state = initialState
-        let acceptedInterval = (ratioTreshold - epsilon)...(ratioTreshold + epsilon)
-        var frequency: FrequencyStatistics = (better: 1.0, worse: 1.0)
-        let statisticsTreshold = 10
-        var i = 0
-        
-        // First 10 iterations are for gathering some statistics
-        while i <= statisticsTreshold || (i > statisticsTreshold && !acceptedInterval.contains(frequency.better / frequency.worse)) {
-            if i > 50 {
-                break // Do not spend much time finding the right temperature
-            }
-            
-            let newState = next(state, temperature)
-            
-            if isBetter(newState, state) {
-                frequency.better += 1.0
-            } else {
-                frequency.worse += 1.0
-            }
-            
-            state = newState
-            if i > statisticsTreshold {
-                temperature += step
-            }
-            i += 1
-        }
-        
-        initialTemperature = temperature
     }
     
     /// Calculate the error from reference solution
