@@ -24,6 +24,12 @@ struct SimulatedAnnealing: ParsableCommand {
     @Option(name: .long)
     var initialTemperature: Double?
     
+    @Option(name: .long)
+    var coolingCoefficient: Double?
+    
+    @Option(name: .long)
+    var equilibriumCoefficient: Int?
+    
     @Flag(help: "Generate plot")
     var plot = false
 
@@ -32,20 +38,19 @@ struct SimulatedAnnealing: ParsableCommand {
             throw SimulatedAnnealingError.invalidProblemType
         }
         
-//        print("Solving \(count ?? 1) \(problemType) problems...")
+        print("Solving \(count ?? 1) \(problemType) problems...")
         let engine = createEngine(from: problemType)
         try engine.loadProblems(inputPath, count ?? 1, solutionPath)
-        let results = engine.measure(plot: plot, initialTemperature)
+        let results = engine.measure(plot: plot, initialTemperature, coolingCoefficient, equilibriumCoefficient)
 
         let instanceId = inputPath.split(separator: "/").last!
         let times = results.compactMap { $0.time }
         let avgTime = times.reduce(0.0, +) / Double(results.count)
         let errors = results.compactMap { $0.error }
         let avgError = errors.reduce(0.0, +) / Double(results.count)
+        let solutionRatio = results.reduce(0.0) { $0 + ($1.solution.isSolution ? 1.0 : 0.0) } / Double(results.count)
         
-        print("{\"instance\": \"\(instanceId)\",\"initial_temperature\": \(initialTemperature ?? 512.0), \"average_time\": \(avgTime.rounded()), \"average_error\": \(avgError)}")
-        
-//        print("\nFinished\nAverage time: \(avgTime) ms\nMax time: \(times.max() ?? -1) ms\nAverage error: \(avgError)\nMax error: \(errors.max() ?? -1)")
+        print("{\"instance\": \"\(instanceId)\",\"solutionRatio\": \(solutionRatio), \"average_time\": \(avgTime.rounded()), \"average_error\": \(avgError)}")
     }
     
     func createEngine(from problemType: ProblemType) -> Engine {

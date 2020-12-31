@@ -8,4 +8,5 @@
 protocol Configuration: Encodable, CustomStringConvertible {
     var cost: Int { get }
     var randomNeighbour: Configuration { get }
+    var isSolution: Bool { get }
 }

@@ -20,7 +20,7 @@ final class KnapsackSolver: Solver {
         self.equilibriumCoefficient = equilibriumCoefficient
     }
     
-    func frozen(_ temperature: Double, _ changeRatio: Float) -> Bool {
+    func frozen(_ temperature: Double, _ changeRatio: Float, _ best: Configuration) -> Bool {
         return changeRatio < 0.2
     }
     

@@ -12,10 +12,9 @@ struct MWSATSolver: Solver {
     var initialState: Configuration
     var coolingCoefficient: Double
     var equilibriumCoefficient: Int
-    
-    func frozen(_ temperature: Temperature, _ changeRatio: Float) -> Bool {
-//        return changeRatio < 0.2
-        return temperature <= 1.0
+
+    func frozen(_ temperature: Temperature, _ changeRatio: Float, _ best: Configuration) -> Bool {
+        return (changeRatio < 0.86 && best.isSolution) || temperature < 1.0
     }
     
     func equilibrium(_ iteration: Int, _ problem: Problem) -> Bool {

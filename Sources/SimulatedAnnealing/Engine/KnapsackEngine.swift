@@ -15,7 +15,7 @@ final class KnapsackEngine: Engine {
         problems = try KnapsackProblem.loadProblems(path: path, count: count)
     }
     
-    func measure(plot: Bool, _ initialTemperature: Double?) -> [SolverResult] {
+    func measure(plot: Bool, _ initialTemperature: Double?, _ coolingCoefficient: Double?, _ equilibriumCoefficient: Int?) -> [SolverResult] {
         var results = [SolverResult]()
         
         for (i, problem) in problems.enumerated() {

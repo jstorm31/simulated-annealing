@@ -24,7 +24,7 @@ protocol Solver {
     var initialState: Configuration { get set }
     var coolingCoefficient: Double { get set }
     
-    func frozen(_ temperature: Temperature, _ changeRatio: Float) -> Bool
+    func frozen(_ temperature: Temperature, _ changeRatio: Float, _ best: Configuration) -> Bool
     func equilibrium(_ iteration: Int, _ problem: Problem) -> Bool
     func isBetter(_ lhs: Configuration, _ rhs: Configuration) -> Bool
     func delta(_ currentState: Configuration, _ newState: Configuration) -> Double
@@ -43,9 +43,8 @@ extension Solver {
         var changes = 1
         var changeRatio: Float = 1.0
         var j = 0
-//        print("Initial state: \(state)\nInitial temperature: \(temperature)")
         
-        while !frozen(temperature, changeRatio) {
+        while !frozen(temperature, changeRatio, best) {
             var i = 0
                         
             while !equilibrium(i, problem) {
@@ -70,6 +69,8 @@ extension Solver {
             j += 1
         }
         
+        print("Freezing temperature: \(temperature), change ratio: \(changeRatio)")
+        
         if plot {
             self.plot(points)
         }
@@ -91,18 +92,19 @@ extension Solver {
     
     func plot(_ points: [Int]) {
         let renderer = AGGRenderer()
+        
         var plot = LineGraph<Float, Float>()
-        plot.addSeries(points.enumerated().map { Float($0.0) }, points.map { Float($0) }, label: "", color: .lightBlue)
+        plot.addSeries(points.enumerated().map { Float($0.0) }, points.map { Float($0) }, label: "One bit flip", color: .lightBlue)
         plot.plotTitle.title = "Simulated annealing for Weighted 3-SAT problem"
         plot.plotLabel.xLabel = "Iteration"
-        plot.plotLabel.yLabel = "Cost"
+        plot.plotLabel.yLabel = "Satisfiable clauses count"
         plot.plotLineThickness = 0.5
         
         let path = NSString(string: "~/FIT/KOP/simulated-annealing/Output").expandingTildeInPath
         let fileName = path + "/simulated_annealing"
         
         do {
-            try plot.drawGraphAndOutput(fileName: fileName, renderer: renderer)
+            try plot.drawGraphAndOutput(size: .init(width: 600, height: 900), fileName: fileName, renderer: renderer)
         } catch {
             print("Error generating plot")
             print(error)

@@ -17,6 +17,10 @@ struct KnapsackConfiguration: Configuration {
         return weight <= problem.capacity
     }
     
+    var isSolution: Bool {
+        return fitsCapacity
+    }
+    
     var cost: Int {
         if !fitsCapacity {
             return Int.random(in: 0...(problem.minPrice - 1))

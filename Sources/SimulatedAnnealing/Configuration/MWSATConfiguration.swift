@@ -15,15 +15,15 @@ struct MWSATConfiguration: Configuration {
 
     var cost: Int {
         get {
-//            if !isSatisfiable {
-//                return Int.random(in: 0..<problem.weights.min()!)
-//            }
-
             return satisfiableClausesCount
         }
         set {
             satisfiableClausesCount = newValue
         }
+    }
+    
+    var isSolution: Bool {
+        return isSatisfiable
     }
     
     var evaluation: [Bool] {
@@ -43,9 +43,12 @@ struct MWSATConfiguration: Configuration {
     }
     
     var randomNeighbour: Configuration {
-        let flipPosition = Int.random(in: 0..<evaluation.count)
         var newEvaluation = evaluation
-        newEvaluation[flipPosition] = !newEvaluation[flipPosition]
+
+        for _ in 0..<2 {
+            let flipPosition = Int.random(in: 0..<evaluation.count)
+            newEvaluation[flipPosition] = !newEvaluation[flipPosition]
+        }
 
         return MWSATConfiguration(problem: problem, evaluation: newEvaluation)
     }
